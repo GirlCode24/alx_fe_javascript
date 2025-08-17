@@ -242,6 +242,49 @@ async function sendQuoteToServer(quote) {
   }
 }
 
+// --- Sync Quotes with Server ---
+async function syncQuotes() {
+    try {
+        // Fetch server quotes
+        const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+        const serverData = await response.json();
+
+        // Simulate server quotes (map into your structure)
+        const serverQuotes = serverData.slice(0, 10).map(post => ({
+            text: post.title,
+            author: "Server",
+            category: "General",
+            id: post.id
+        }));
+
+        // Load local quotes
+        let localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+        // Conflict resolution: server wins
+        let mergedQuotes = [...serverQuotes];
+
+        // Add unique local quotes (not on server)
+        localQuotes.forEach(lq => {
+            if (!mergedQuotes.some(sq => sq.text === lq.text && sq.author === lq.author)) {
+                mergedQuotes.push(lq);
+            }
+        });
+
+        // Save back to local storage
+        localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+
+        // Refresh UI
+        displayQuotes(mergedQuotes);
+
+        console.log("✅ Sync complete. Quotes updated.");
+    } catch (error) {
+        console.error("❌ Sync failed:", error);
+    }
+}
+
+// Run sync every 30 seconds
+setInterval(syncQuotes, 30000);
+
 // Merge + conflict resolution logic
 function mergeQuotes(localQuotes, serverQuotes) {
   const localMap = new Map(localQuotes.map(q => [q.id, q]));
