@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dynamic Quote Generator</title>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
-  
-  <!-- Quote Display -->
-  <div id="quoteDisplay"></div>
+
+  <!-- Quote display -->
+  <div id="quoteDisplay" aria-live="polite"></div>
   <button id="newQuote">Show New Quote</button>
 
   <!-- Category Filter -->
@@ -17,6 +17,18 @@
     <label for="categoryFilter">Filter by Category: </label>
     <select id="categoryFilter"></select>
   </div>
+
+  <!-- Add Quote Form  -->
+  <div id="addQuoteContainer"></div>
+
+  <!-- Import / Export -->
+  <div style="margin-top: 1rem;">
+    <button id="exportQuotes">Export Quotes</button>
+    <input type="file" id="importFile" accept=".json" />
+  </div>
+
+  <!-- sessionStorage -->
+  <p id="lastViewedInfo" style="font-style: italic; margin-top: .5rem;"></p>
 
   <script src="script.js"></script>
 </body>
