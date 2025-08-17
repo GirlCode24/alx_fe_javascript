@@ -4,11 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dynamic Quote Generator</title>
+  <style>
+    #syncBar { display:flex; gap:.5rem; align-items:center; margin:.75rem 0; flex-wrap: wrap; }
+    #syncStatus { font-size:.9rem; }
+    #conflictTray { border:1px solid #ddd; padding:.75rem; margin-top:1rem; display:none; }
+    #conflictTray h3 { margin:.25rem 0 .5rem; }
+    .conflict { border-top:1px dashed #ccc; padding:.5rem 0; }
+    .conflict pre { background:#f7f7f7; padding:.5rem; overflow:auto; }
+    .hidden { display:none; }
+  </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Quote display -->
+  <!-- Quote Display -->
   <div id="quoteDisplay" aria-live="polite"></div>
   <button id="newQuote">Show New Quote</button>
 
@@ -22,13 +31,24 @@
   <div id="addQuoteContainer"></div>
 
   <!-- Import / Export -->
-  <div style="margin-top: 1rem;">
+  <div style="margin-top: .75rem;">
     <button id="exportQuotes">Export Quotes</button>
     <input type="file" id="importFile" accept=".json" />
   </div>
 
-  <!-- sessionStorage -->
-  <p id="lastViewedInfo" style="font-style: italic; margin-top: .5rem;"></p>
+  <!-- Sync & Conflict UI -->
+  <div id="syncBar">
+    <button id="syncNow">Sync Now</button>
+    <label><input type="checkbox" id="autoSync" checked /> Auto Sync (30s)</label>
+    <span id="syncStatus">Idle</span>
+    <small id="lastSync"></small>
+  </div>
+
+  <div id="conflictTray" aria-live="polite">
+    <h3>Conflicts resolved automatically (server-wins). Review?</h3>
+    <div id="conflictList"></div>
+    <button id="hideConflicts">Hide</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
