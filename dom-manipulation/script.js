@@ -79,11 +79,20 @@ function addQuote() {
     return;
   }
 
+  const newQuote = { 
+    text: newQuoteText, 
+    category: newQuoteCategory, 
+    id: Date.now() // unique id
+  };
+
   // Push into quotes array
-  quotes.push({ text: newQuoteText, category: newQuoteCategory });
+  quotes.push(newQuote);
 
   // Save updated quotes to storage
   localStorage.setItem("quotes", JSON.stringify(quotes));
+
+  // Sync with server
+  sendQuoteToServer(newQuote);
 
   // Refresh category 
   populateCategories();
@@ -203,13 +212,33 @@ async function fetchQuotesFromServer() {
 
     // Save back into local storage
     localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+    quotes = mergedQuotes; // update global variable
 
-    // Re-render UI
-    renderQuotes(mergedQuotes);
+    // Re-render categories & quote
+    populateCategories();
+    showRandomQuote();
 
     notifyUser("Quotes synced with server!");
   } catch (error) {
     console.error("Error fetching quotes from server:", error);
+  }
+}
+
+// Function to send a new quote to the server (simulation)
+async function sendQuoteToServer(quote) {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json" 
+      },
+      body: JSON.stringify(quote) 
+    });
+
+    const data = await response.json();
+    console.log("Quote successfully sent to server:", data);
+  } catch (error) {
+    console.error("Error sending quote to server:", error);
   }
 }
 
