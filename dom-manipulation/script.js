@@ -128,6 +128,54 @@ function createAddQuoteForm() {
 // Event Listeners
 newQuoteBtn.addEventListener("click", showRandomQuote);
 categoryFilter.addEventListener("change", filterQuotes);
+// Export / Import event listeners
+document.getElementById("exportQuotes").addEventListener("click", exportQuotes);
+document.getElementById("importFile").addEventListener("change", importFromJsonFile);
+
+
+// Export quotes to JSON file
+function exportQuotes() {
+  const data = JSON.stringify(quotes, null, 2); // Pretty-print JSON
+  const blob = new Blob([data], { type: "application/json" }); // <== Blob + application/json
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  URL.revokeObjectURL(url);
+}
+
+// Import quotes from JSON file
+function importFromJsonFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedQuotes = JSON.parse(e.target.result);
+
+      if (!Array.isArray(importedQuotes)) {
+        alert("Invalid file format.");
+        return;
+      }
+
+      // Merge and save
+      quotes.push(...importedQuotes);
+      localStorage.setItem("quotes", JSON.stringify(quotes));
+      populateCategories();
+      alert("Quotes imported successfully!");
+    } catch (err) {
+      alert("Error parsing JSON file.");
+    }
+  };
+
+  reader.readAsText(file);
+}
 
 //Initialize on load
 populateCategories();
